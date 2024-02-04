@@ -4,7 +4,7 @@ import { SettingContainer } from "renderer/components/settings/setting-container
 import { RadioItem, SettingRadioArray } from "renderer/components/settings/setting-radio-array.component";
 import { BsmButton } from "renderer/components/shared/bsm-button.component";
 import { BsmIcon, BsmIconType } from "renderer/components/svgs/bsm-icon.component";
-import { DefaultConfigKey, ThemeConfig } from "renderer/config/default-configuration.config";
+import { DefaultConfigKey, ThemeConfig, defaultConfiguration } from "renderer/config/default-configuration.config";
 import { useThemeColor } from "renderer/hooks/use-theme-color.hook";
 import { SteamDownloaderService } from "renderer/services/bs-version-download/steam-downloader.service";
 import { ConfigurationService } from "renderer/services/configuration.service";
@@ -32,7 +32,7 @@ import { ModelsManagerService } from "renderer/services/models-management/models
 import { useTranslation } from "renderer/hooks/use-translation.hook";
 import { VersionFolderLinkerService } from "renderer/services/version-folder-linker.service";
 import { useService } from "renderer/hooks/use-service.hook";
-import { lastValueFrom } from "rxjs";
+import { Observable, delay, lastValueFrom } from "rxjs";
 import { BsmException } from "shared/models/bsm-exception.model";
 import { useObservable } from "renderer/hooks/use-observable.hook";
 import { OculusDownloaderService } from "renderer/services/bs-version-download/oculus-downloader.service";
@@ -77,6 +77,11 @@ export function SettingsPage() {
     const nav = useNavigate();
     const t = useTranslation();
 
+    const modInstallItems: RadioItem<string>[] = [
+        { id: 0, text: t("notifications.settings.additional-content.mod-install.install-all"), value: "all" },
+        { id: 1, text: t("notifications.settings.additional-content.mod-install.install-new"), value: "new" }
+    ];
+
     const themeSelected = useObservable(() => themeService.theme$, "os");
     const languageSelected = useObservable(() => i18nService.currentLanguage$, i18nService.getFallbackLanguage());
     const downloadStore = useObservable(() => bsDownloader.defaultStore$);
@@ -88,6 +93,9 @@ export function SettingsPage() {
     const [modelsDeepLinkEnabled, setModelsDeepLinkEnabled] = useState(false);
     const [hasDownloaderSession, setHasDownloaderSession] = useState(false);
     const appVersion = useObservable(() => ipcService.sendV2<string>("current-version"));
+
+    const [installAllMods, setInstallAllMods] = useState(configService.get<boolean>("mod-install-all"));
+    //var installAllMods: boolean = configService.get<boolean>("mod-install-all");
 
     useEffect(() => {
         loadInstallationFolder();
@@ -136,6 +144,14 @@ export function SettingsPage() {
     const handleChangeLanguage = (item: RadioItem<string>) => {
         i18nService.setLanguage(item.value);
     };
+
+    const handleChangeModInstall = (item: RadioItem<string>) => {
+        setInstallAllMods(Boolean(item.id));
+        //configService.set("mod-install-all" as DefaultConfigKey, Boolean(item.id));
+        //installAllMods
+        delay(10);
+        console.log(item.id, Boolean(item.id), installAllMods);
+    }
 
     const setDefaultInstallationFolder = () => {
         if (!progressBarService.require()) {
@@ -411,6 +427,9 @@ export function SettingsPage() {
                                 </div>
                             </li>
                         </ul>
+                    </SettingContainer>
+                    <SettingContainer minorTitle={t("notifications.settings.additional-content.mod-install.title")}>
+                        <SettingRadioArray items={modInstallItems} selectedItemId={Number(installAllMods)} onItemSelected={handleChangeModInstall} />
                     </SettingContainer>
                 </SettingContainer>
 
