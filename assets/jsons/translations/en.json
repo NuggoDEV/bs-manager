@@ -359,6 +359,11 @@
                             "not-remind": "Don't remind me"
                         }
                     }
+                },
+                "mod-install": {
+                    "title": "Mod installation",
+                    "install-all": "Reinstall all mods",
+                    "install-new": "Install new mods"
                 }
             }
         },
