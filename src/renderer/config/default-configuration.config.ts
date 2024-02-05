@@ -10,9 +10,9 @@ export const defaultConfiguration: { [key in DefaultConfigKey]: any } = {
         window.electron.path.join("Beat Saber_Data", "CustomWIPLevels"),
         "DLC"
     ],
-    "mod-install-all": true,
+    mod_install_all: false,
 };
 
-export type DefaultConfigKey = "first-color" | "second-color" | "theme" | "language" | "supported_languages" | "default_mods" | "default-shared-folders" | "mod-install-all";
+export type DefaultConfigKey = "first-color" | "second-color" | "theme" | "language" | "supported_languages" | "default_mods" | "default-shared-folders" | "mod_install_all";
 
 export type ThemeConfig = "dark" | "light" | "os";
