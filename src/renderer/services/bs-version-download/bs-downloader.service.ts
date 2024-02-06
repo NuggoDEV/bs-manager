@@ -9,6 +9,7 @@ import { DownloaderServiceInterface } from "./bs-store-downloader.interface";
 import { AbstractBsDownloaderService } from "./abstract-bs-downloader.service";
 import { BSVersionManagerService } from "../bs-version-manager.service";
 import { Observable } from "rxjs";
+import { QuestDownloaderService } from "./quest-downloader.service";
 
 export class BsDownloaderService extends AbstractBsDownloaderService {
 
@@ -26,6 +27,7 @@ export class BsDownloaderService extends AbstractBsDownloaderService {
     private readonly modals: ModalService;
     private readonly steamDownloader: SteamDownloaderService;
     private readonly oculusDownloader: OculusDownloaderService;
+    private readonly questDownloader: QuestDownloaderService;
     private readonly versionManager: BSVersionManagerService;
 
     private readonly SELECTED_STORE_TO_DOWNLOAD_KEY = "selectedStoreToDownload";
@@ -36,6 +38,7 @@ export class BsDownloaderService extends AbstractBsDownloaderService {
         this.modals = ModalService.getInstance();
         this.steamDownloader = SteamDownloaderService.getInstance();
         this.oculusDownloader = OculusDownloaderService.getInstance();
+        this.questDownloader = QuestDownloaderService.getInstance();
         this.versionManager = BSVersionManagerService.getInstance();
     }
 
@@ -45,6 +48,8 @@ export class BsDownloaderService extends AbstractBsDownloaderService {
                 return this.oculusDownloader;
             case BsStore.STEAM:
                 return this.steamDownloader;
+            case BsStore.QUEST:
+                return this.questDownloader;
             default:
                 throw new Error("Unknown store");
         }
