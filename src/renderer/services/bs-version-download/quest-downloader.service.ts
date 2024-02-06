@@ -1,11 +1,13 @@
 import { MetaAuthErrorCodes, OculusDownloaderErrorCodes } from "shared/models/bs-version-download/oculus-download.model";
 import { IpcService } from "../ipc.service";
-import { ModalService } from "../modale.service";
+import { ModalExitCode, ModalService } from "../modale.service";
 import { NotificationService } from "../notification.service";
 import { ProgressBarService } from "../progress-bar.service";
 import { AbstractBsDownloaderService } from "./abstract-bs-downloader.service";
 import { DownloaderServiceInterface } from "./bs-store-downloader.interface";
 import { BSVersion } from "shared/bs-version.interface";
+import { EnterMetaTokenModal } from "renderer/components/modal/modal-types/bs-downgrade/enter-meta-token-modal.component";
+import { lastValueFrom } from "rxjs";
 
 
 export class QuestDownloaderService extends AbstractBsDownloaderService implements DownloaderServiceInterface
@@ -35,9 +37,38 @@ export class QuestDownloaderService extends AbstractBsDownloaderService implemen
         this.modals = ModalService.getInstance();
     }
 
+    private async doDownloadBsVersion(bsVersion: BSVersion, isVerification: boolean): Promise<BSVersion> {
+
+        const autoDownloadFailed = false;
+
+        return (async () => {
+
+            const tokenRes = await this.modals.openModal(EnterMetaTokenModal);
+
+            if(tokenRes.exitCode !== ModalExitCode.COMPLETED){
+                return false;
+            }
+
+            //return lastValueFrom(this.startDownloadBsVersion({ bsVersion, isVerification, token: tokenRes.data })).then(() => true);
+
+        })().then(res => {
+
+            if(autoDownloadFailed || !res){
+                return bsVersion;
+            }
+
+            if(isVerification){
+                this.notification.notifySuccess({title: "notifications.bs-download.success.titles.verification-finished"});
+            } else {
+                this.notification.notifySuccess({title: "notifications.bs-download.success.titles.download-success"});
+            }
+
+            return bsVersion;
+        }).finally(() => this.progressBar.hide(true));
+    }
     
     downloadBsVersion(version: BSVersion): Promise<BSVersion> {
-        throw new Error("Method not implemented.");
+        return this.doDownloadBsVersion(version, false);
     }
     verifyBsVersion(version: BSVersion): Promise<BSVersion> {
         throw new Error("Method not implemented.");
