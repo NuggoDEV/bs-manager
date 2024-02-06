@@ -49,7 +49,7 @@ export class BsModsManagerService {
         return this.ipcService.sendV2<Mod[], BSVersion>("get-installed-mods", { args: version });
     }
 
-    public installMods(mods: Mod[], version: BSVersion): Promise<void> {
+    public async installMods(mods: Mod[], version: BSVersion): Promise<void> { //async
         if (this.os.isOffline) {
             this.notifications.notifyError({
                 title: "notifications.shared.errors.titles.no-internet",
@@ -62,8 +62,24 @@ export class BsModsManagerService {
             return Promise.resolve();
         }
 
+        const installedModsObs = this.getInstalledMods(version); // Start
+
+        //installedModsObs.forEach((installedMods: Mod[]) => {
+        //    installedMods.forEach((installedMod: Mod) => {
+                await mods.forEach((mod: Mod) => {
+                    //if (mod.name === installedMod.name && mod.version === installedMod.version) {
+                    //    console.log("mod is installed");
+                        mods.splice(mods.indexOf(mod), 1);
+                    //}
+                })
+        //    })
+        //});
+        console.log(mods); // End
+
         const progress$: Observable<ProgressionInterface> = this.ipcService.watch<ModInstallProgression>("mod-installed").pipe(
             map(res => {
+                //console.log("aaaaaaaaaaa", res.data.progression, res.data.name);
+
                 return { progression: res.data.progression, label: res.data.name } as ProgressionInterface;
             })
         );
