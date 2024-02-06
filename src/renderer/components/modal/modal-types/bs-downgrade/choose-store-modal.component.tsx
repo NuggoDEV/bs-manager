@@ -16,6 +16,7 @@ export const ChooseStore: ModalComponent<BsStore> = ({ resolver }) => {
 
     const [oculusHover, setOculusHover] = useState(false);
     const [steamHover, setSteamHover] = useState(false);
+    const [questHover, setQuestHover] = useState(false);
 
     const chooseStore = (store: BsStore) => {
         resolver({ exitCode: ModalExitCode.COMPLETED, data: store });
@@ -43,7 +44,7 @@ export const ChooseStore: ModalComponent<BsStore> = ({ resolver }) => {
     })();
 
     return (
-        <form className="flex flex-col gap-3 max-w-sm">
+        <form className="flex flex-col gap-3 max-w-m">
             <h1 className="text-3xl uppercase tracking-wide w-full text-center text-gray-800 dark:text-gray-200">{t("modals.choose-store.title")}</h1>
             <p className="w-auto text-gray-800 dark:text-gray-200 text-center">{t("modals.choose-store.body")}</p>
             <div className="flex flex-row w-full flex-grow gap-3">
@@ -54,6 +55,10 @@ export const ChooseStore: ModalComponent<BsStore> = ({ resolver }) => {
                 <div className="flex flex-col flex-grow basis-0 gap-2 text-center px-5 pt-3 pb-1 rounded-md border-main-color-3 border-2 cursor-pointer" onMouseEnter={() => setSteamHover(true)} onMouseLeave={() => setSteamHover(false)} onClick={() => chooseStore(BsStore.STEAM)} style={{backgroundColor: steamHover ? bg.dim : bg.bright}}>
                     <SteamIcon className="flex-grow"/>
                     <h2 className="font-bold">Steam</h2>
+                </div>
+                <div className="flex flex-col flex-grow basis-0 gap-2 text-center px-5 pt-3 pb-1 rounded-md border-main-color-3 border-2 cursor-pointer" onMouseEnter={() => setQuestHover(true)} onMouseLeave={() => setQuestHover(false)} onClick={() => chooseStore(BsStore.QUEST)} style={{backgroundColor: questHover ? bg.dim : bg.bright}}>
+                    <OculusIcon className="flex-grow aspect-square text-black bg-white rounded-full p-5"/>
+                    <h2 className="font-bold">Oculus Quest (Standalone)</h2>
                 </div>
             </div>
             <p onClick={goToSettings} className="text-sm italic underline cursor-pointer text-center leading-3">{t("modals.choose-store.set-in-settings")}</p>
