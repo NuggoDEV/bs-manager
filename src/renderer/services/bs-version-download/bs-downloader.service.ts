@@ -96,7 +96,12 @@ export class BsDownloaderService extends AbstractBsDownloaderService {
 
         const store = (() => {
             if(version.metadata?.store){ return version.metadata.store; }
-            return version.steam ? BsStore.STEAM : BsStore.OCULUS;
+            if (version.steam)
+                return BsStore.STEAM;
+            else if (version.oculus)
+                return BsStore.OCULUS;
+            else if (version.quest)
+                return BsStore.QUEST;
         })();
 
         return this.getStoreDownloader(store).verifyBsVersion(version).finally(() => {
